@@ -2,9 +2,9 @@
 import numpy as np
 from sklearn.model_selection import train_test_split
 from preprocess import data_preprocess, generate_datasets, count_labels, extract_class
-from optuna_objective import optuna_objective
+from objective import optuna_objective
 import optuna
-
+import argparse
 
 def main(data_dir, labels_dir, results_dir):
     #Preprocessing data and generating classes
@@ -37,11 +37,11 @@ def main(data_dir, labels_dir, results_dir):
     opt_model = optuna_objective(X_train, X_test, y_train, y_test, n_classes=5, sample_weights_loss=True)
     study.optimize(opt_model.objective, n_trials=1)
 
-
 if __name__ == "__main__":
-    # Directories
-    data_dir = '/content/drive/MyDrive/Tesis_code/Escolares/Data/EEG_features_DE'  # EEG files
-    labels_dir = '/content/drive/MyDrive/Tesis_code/Escolares/Data/labels'      # Labels files
-    results_dir = '/content/drive/MyDrive/Tesis_code/Escolares/Results/Optuna'
-    main(data_dir, labels_dir, results_dir)
+    parser = argparse.ArgumentParser(description="Run EEG classification optimization with Optuna.")
+    parser.add_argument("--data_dir", type=str, required=True, help="Path to EEG features directory")
+    parser.add_argument("--labels_dir", type=str, required=True, help="Path to labels directory")
+    parser.add_argument("--results_dir", type=str, required=True, help="Path to store optimization results")
 
+    args = parser.parse_args()
+    main(args.data_dir, args.labels_dir, args.results_dir)
